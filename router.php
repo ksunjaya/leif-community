@@ -62,6 +62,12 @@
 				$pc->setDefaultAddress();
 				header('Location: profile');
 				break;
+			case $baseURL.'/delete-address':
+				require_once 'controller/profileController.php';
+				$pc = new ProfileController();
+				$pc->deleteAddress();
+				header('Location: profile');
+				break;
 			default:
 				header("Location: not-found");
 				break;

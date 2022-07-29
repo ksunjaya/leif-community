@@ -301,6 +301,43 @@ main>.main-content>div>#division{
   color: #8c8d8f;
 }
 
+/* --edit profile-- */
+#profile-modal{
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+}
+
+#profile-modal>.close-profile-modal{
+  border: 2px solid black;
+  padding: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 10rem;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 3rem;
+}
+
+#profile-modal>.profile-modal-content{
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+#profile-edit-form{
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 90vw;
+}
+
 /**--content1 (alamat)--**/
 #content1{
   font-size: 1rem;
@@ -330,10 +367,7 @@ main>.main-content>div>#division{
 #content1>.address-card>.address-title{
   display: flex;
   justify-content:space-between;
-}
-
-#content1>.address-card a{
-  color: #E45545;
+  align-items: center;
 }
 
 #content1>.address-card a>i{
@@ -355,6 +389,10 @@ main>.main-content>div>#division{
 
 .green{
   border-color: #008631;
+}
+
+.red{
+  color: #E45545;
 }
 
 /**--content2 (Minat Pelayanan)--**/
@@ -408,7 +446,7 @@ footer form input{
 }
 
 /* -- add address -- */
-#add-address{
+#add-address, #delete-address{
   display: none; 
   position: fixed; 
   opacity: 1; 

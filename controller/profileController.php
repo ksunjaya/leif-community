@@ -82,6 +82,14 @@ class ProfileController{
     ->execute();
   }
 
+  public function deleteAddress(){
+    $id_alamat = $_POST['id-alamat'];
+    $this->db->table('Alamat')
+    ->delete()
+    ->where('id_alamat', $id_alamat)
+    ->execute();
+  }
+
   private function getListAlamat($username){
     $query_result = $this->db->table('Alamat as a')
     ->select([
