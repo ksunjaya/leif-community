@@ -68,6 +68,28 @@
 				$pc->deleteAddress();
 				header('Location: profile');
 				break;
+			case $baseURL.'/update-profile':
+				require_once 'controller/profileController.php';
+				$pc = new ProfileController();
+				echo $pc->updateProfile();
+				break;
+			case $baseURL.'/update-profile-picture':
+				require_once 'controller/profileController.php';
+				$pc = new ProfileController();
+				echo $pc->updateProfilePicture();
+				break;
+			case $baseURL.'/add-pelayanan':
+				require_once 'controller/profileController.php';
+				$pc = new ProfileController();
+				echo $pc->addPelayanan();
+				header('Location: profile');
+				break;
+			case $baseURL.'/delete-pelayanan':
+				require_once 'controller/profileController.php';
+				$pc = new ProfileController();
+				echo $pc->deletePelayanan();
+				header('Location: profile');
+				break;
 			default:
 				header("Location: not-found");
 				break;

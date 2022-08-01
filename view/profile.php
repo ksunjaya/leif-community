@@ -1,6 +1,5 @@
 <script type="text/javascript" src="view/assets/js/vendor/jquery.leanModal.min.js"></script>
 <script type="text/javascript" src="view/assets/js/vendor/animatedModal.min.js"></script>
-<script type="text/javascript" src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
 <script type="text/javascript">
   $(function() {
     $('a[rel*=leanModal]').leanModal({ top : 50, closeButton: ".modal-close" });		
@@ -20,7 +19,8 @@
     <!-- <img src="src/img/logo.png"> -->
     <p>LEIF COMMUNITY</p>
     <a href="#" class="nav-link-mobile">
-      <i class="fa-solid fa-qrcode"></i>
+      <i class="fa-solid fa-bell"></i>
+      <span class="button-badge">2</span>
     </a>
   </nav>
   
@@ -58,7 +58,9 @@
     <?php }?>
 
     <div class="main-content">
-      <img src="src/img/default_avatar.jpg" alt="Avatar" id="avatar">
+      <a href="#picture-modal" rel="leanModal">
+        <img src="<?php echo $model->getPhotoPath();?>" alt="Avatar" id="avatar">
+      </a>
       <div>
         <p id="name"><?php echo $model->getNamaLengkap();?></p>
         <p id="division"><?php echo $model->getRole();?></p>
@@ -66,6 +68,32 @@
       </div>
     </div>
   </main>
+
+  <div id="content2">
+    <h2>Minat Pelayanan</h2>
+    
+    <div class="pelayanan-card-container">
+      <?php 
+        foreach($list_pelayanan as $pelayanan){
+          if($pelayanan->isTaken()){
+            echo("
+            <div class='pelayanan-card' style='background-image: url(\"src/img/pelayanan/". $pelayanan->getPhotoPath()."\")'>
+              <p>". $pelayanan->getNama()."</p>
+              <form action='delete-pelayanan' method='POST'>
+                <input type='hidden' name='id-pelayanan' value='". $pelayanan->getIdPelayanan() ."'>
+                <input type='submit' value='Hapus'>
+              </form>
+            </div>
+            ");
+          }
+        }
+      ?>
+
+      <a href="#pelayanan-modal" rel="leanModal"><div class="pelayanan-card">
+        <i class="fa-solid fa-plus"></i>
+      </div></a>
+    </div>
+  </div>
 
   <div id="content1">
     <h2>Daftar Alamat</h2>
@@ -103,71 +131,13 @@
     <a href="#add-address" class="a-blue-button" rel="leanModal"><i class="fa-solid fa-plus"></i>Tambah Alamat Baru</a>
   </div>
 
-  <div id="content2">
-    <h2>Minat Pelayanan</h2>
-    <form>
-      <span>      
-        <input type="checkbox" id="wl" value="worship-leader">
-        <label for="wl"><i class="fa-solid fa-hand"></i>Worship Leader</label>
-      </span>
-
-      <span>    
-        <input type="checkbox" id="singer" value="singer">
-        <label for="singer"><i class="fa-solid fa-microphone"></i>Singer</label>
-      </span>   
-      
-      <span>
-        <input type="checkbox" id="keyboard" value="keyboard">
-        <label for="keyboard"><i class="fa-solid fa-music"></i>Keyboardist</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="guitar" value="guitar">
-        <label for="guitar"><i class="fa-solid fa-guitar"></i>Guitarist</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="bass" value="bass">
-        <label for="bass"><i class="fa-solid fa-guitar"></i>Bassist</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="drum" value="drum">
-        <label for="drum"><i class="fa-solid fa-drum"></i>Drummer</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="usher" value="usher">
-        <label for="usher"><i class="fa-solid fa-handshake-angle"></i>Usher</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="mulmed" value="mulmed">
-        <label for="mulmed"><i class="fa-solid fa-computer"></i>Multimedia</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="design" value="design">
-        <label for="design"><i class="fa-solid fa-paintbrush"></i>Desain Visual</label>
-      </span>
-
-      <span>
-        <input type="checkbox" id="pcg" value="pcg">
-        <label for="pcg"><i class="fa-solid fa-people-roof"></i>Pemimpin CG</label>
-      </span>
-
-      <a href="#" class="a-blue-button disabled" id="save-minat"><i class="fa-solid fa-floppy-disk"></i>Simpan Minat Pelayanan</a>
-    </form>
-  </div>
-
-
   <div id="content3">
     CONTENT3
   </div>
 
   <footer>
     <form action="logout" method="POST">
-      <input type="submit" value="Keluar">
+      <input type="submit" value="Keluar Akun">
     </form>
     <p style="margin: 1rem"><i class="fa-solid fa-copyright"></i> 2022 Leif Community.<br>Keep Spirit, Keep Praying, and All For Jesus.</p>
   </footer>
@@ -238,10 +208,7 @@
       
   <div class="profile-modal-content">
     <h2>Ubah Profil Pribadi</h2>
-    <form id="profile-edit-form" action="" method="POST">
-
-      <div id="drag-drop-area"></div>
-
+    <form id="profile-edit-form" action="update-profile" method="POST">
       <div class="form">
         <input type="text" name="nama" id="nama" class="form__input" autocomplete="off" placeholder=" " value="<?php echo $model->getNamaLengkap();?>" required>
         <label for="nama" class="form__label">Nama Lengkap</label>
@@ -258,7 +225,7 @@
           <label for="tanggal-lahir" class="form__label">Tanggal Lahir</label>
         </div>
         <div class="form" style="width: 50%">
-          <input type="number" name="tahun-bergabung" id="tahun-bergabung" class="form__input" autocomplete="off" placeholder=" " min="2010" max="2050" value="2022" value="<?php echo $model->getTahunBergabung();?>" required>
+          <input type="number" name="tahun-bergabung" id="tahun-bergabung" class="form__input" autocomplete="off" placeholder=" " min="2010" max="2050" value="<?php echo $model->getTahunBergabung();?>" required>
           <label for="tahun-bergabung" class="form__label">Tahun Bergabung</label>
         </div>
       </div>
@@ -276,6 +243,47 @@
         <p style="font-size: 0.7rem; color: black; text-align:center;">*Perubahan profil akan membutuhkan verifikasi ulang dari tim kami. Beberapa fitur mungkin tidak dapat diakses hingga proses verifikasi selesai.</p>
       </div>
       </form>
+  </div>
+</div>
+
+<!--Edit Profile Picture-->
+<div id="picture-modal">
+  <div class="modal-header">
+    <h2>Ubah Foto Profil</h2>
+    <a class="modal-close" href="#"><i class="fa-solid fa-xmark"></i></a>
+  </div>
+  <div class="modal-content">
+    <!-- <div id="drag-drop-area"></div> -->
+    <div class="Uppy">
+      <form action="https://xhr-server.herokuapp.com/upload" method="post">
+        <h5>Uppy was not loaded — slow connection, unsupported browser, weird JS error on a page — but the upload still works, because HTML is cool like that</h5>
+        <input type="file" name="files[]" multiple="">
+        <button type="submit">Fallback Form Upload</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Pelayanan -->
+<div id="pelayanan-modal">
+<div class="modal-header">
+    <h2>Tambah Pelayanan</h2>
+    <a class="modal-close" href="#"><i class="fa-solid fa-xmark"></i></a>
+  </div>
+  <div class="modal-content">
+    <form action="add-pelayanan" method="POST">
+      <div class="form">
+        <select name="id-pelayanan">
+        <?php 
+        foreach($list_pelayanan as $pelayanan){
+          if($pelayanan->isTaken()) continue;
+          echo('<option value="'. $pelayanan->getIdPelayanan() .'">'. $pelayanan->getNama() .'</option>');
+        }
+        ?>
+        </select>
+      </div>
+      <input type="submit" value="Tambah Pelayanan" class="a-blue-button">
+    </form>
   </div>
 </div>
 

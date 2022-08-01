@@ -1,10 +1,12 @@
-var uppy = new Uppy.Core({
+document.querySelector('.Uppy').innerHTML = ''
+
+const uppy = new Uppy.Core({
   id: 'uppy',
   autoProceed: false,
   allowMultipleUploadBatches: false,
-  debug: false,
+  debug: true,
   restrictions: {
-    maxFileSize: null,
+    maxFileSize: 4096000,
     minFileSize: null,
     maxTotalFileSize: null,
     maxNumberOfFiles: 1,
@@ -12,51 +14,61 @@ var uppy = new Uppy.Core({
     allowedFileTypes: ['.jpg', '.jpeg', '.png'],
     requiredMetaFields: [],
   },
-  meta: {},
-  onBeforeFileAdded: (currentFile, files) => currentFile,
-  onBeforeUpload: (files) => {},
-  locale: {},
-  store: new Uppy.DefaultStore(),
-  logger: Uppy.debugLogger,
   infoTimeout: 5000,
 })
 
-uppy.use(Uppy.Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 uppy.use(Uppy.Dashboard, {
   id: 'Dashboard',
-  target: '#drag-drop-area',
-  metaFields: [],
+  target: '.Uppy',
+  //metaFields: [],
   trigger: null,
   inline: true,
-  width: 750,
-  height: 150,
-  thumbnailWidth: 150,
+  // width: 750,
+  // height: 200,
+  // thumbnailWidth: 200,
   showLinkToFileUploadResult: false,
-  showProgressDetails: true,
-  hideUploadButton: false,
-  hideRetryButton: false,
-  hidePauseResumeButton: false,
-  hideCancelButton: false,
-  hideProgressAfterFinish: false,
-  doneButtonHandler: () => {
-    this.uppy.reset()
-    this.requestCloseModal()
-  },
   note: null,
-  closeModalOnClickOutside: false,
-  closeAfterFinish: false,
-  disableStatusBar: false,
-  disableInformer: false,
-  disableThumbnailGenerator: false,
-  disablePageScrollWhenModalOpen: true,
-  animateOpenClose: true,
-  fileManagerSelectionType: 'files',
-  proudlyDisplayPoweredByUppy: true,
-  onRequestCloseModal: () => this.closeModal(),
-  showSelectedFiles: true,
-  showRemoveButtonAfterComplete: false,
-  browserBackButtonClose: false,
-  theme: 'light',
-  autoOpenFileEditor: false,
+  proudlyDisplayPoweredByUppy: false,
+  autoOpenFileEditor: true,
   disableLocalFiles: false,
+})
+
+uppy.use(Uppy.Compressor, {
+  maxHeight: 500,
+  minWidth: 500,
+  quality: 0.8
+})
+
+uppy.use(Uppy.ImageEditor, {
+  target: Uppy.Dashboard,
+  quality: 0.8,
+  cropperOptions: {
+    viewMode: 1,
+    background: false,
+    autoCropArea: 1,
+    responsive: true,
+    croppedCanvasOptions: {},
+    aspectRatio: 1 / 1,
+  },
+  actions: {
+    revert: false,
+    rotate: false,
+    granularRotate: false,
+    flip: true,
+    zoomIn: true,
+    zoomOut: true,
+    cropSquare: false,
+    cropWidescreen: false,
+    cropWidescreenVertical: false,
+  },
+})
+
+uppy.use(Uppy.XHRUpload, {
+  endpoint: '/leif/update-profile-picture',
+  formData: true,
+  fieldName: 'files[]',
+})
+
+uppy.on('upload-success', (file, response) => {
+  window.location.replace("profile");
 })

@@ -45,7 +45,15 @@ CREATE TABLE Pelayanan(
   id_pelayanan INT(3) PRIMARY KEY AUTO_INCREMENT,
   nama VARCHAR(63) NOT NULL,
   divisi INT(3),
+  photo_path VARCHAR(63),
   FOREIGN KEY (divisi) REFERENCES Role(id_role)
+);
+
+CREATE TABLE Pelayanan_Jemaat(
+  id_pelayanan INT(3), 
+  username VARCHAR(31),
+  FOREIGN KEY (id_pelayanan) REFERENCES Pelayanan(id_pelayanan),
+  FOREIGN KEY (username) REFERENCES Jemaat(username)
 );
 
 INSERT INTO Role VALUES(1, 'Server Owner', NULL);
@@ -69,3 +77,14 @@ INSERT INTO Kota(nama_kota) VALUES('Kota Cirebon');
 INSERT INTO Kota(nama_kota) VALUES('Kab. Garut');
 INSERT INTO Kota(nama_kota) VALUES('Kota Jakarta');
 INSERT INTO Kota(nama_kota) VALUES('Kota Yogyakarta');
+
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Bass', 4, 'bass.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Design', 7, 'design.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Drum', 4, 'drum.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Guitar', 4, 'guitar.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Multimedia', 4, 'mulmed.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('PCG', 5, 'pcg.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Keyboard', 4, 'piano.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Singer', 4, 'singer.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Usher', 4, 'usher.jpg');
+INSERT INTO Pelayanan(nama, divisi, photo_path) VALUES('Worship Leader', 4, 'worship-leader.jpg');

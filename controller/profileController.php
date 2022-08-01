@@ -26,12 +26,15 @@ class ProfileController{
     //ambil list nama kota
     $list_kota = $this->getListKota();
     //ambil list alamat
-    $list_alamat = $this->getListAlamat($model->getUsername());
+    $list_alamat = $this->getListAlamat($this->username);
+    //ambil list pelayanan
+    $list_pelayanan = $this->getPelayananList();
 
     return View::createView('profile.php', [
       'model' => $model,
       'list_kota' => $list_kota,
-      'list_alamat' => $list_alamat
+      'list_alamat' => $list_alamat,
+      'list_pelayanan' => $list_pelayanan
     ]);  
   }
 
@@ -87,6 +90,104 @@ class ProfileController{
     $this->db->table('Alamat')
     ->delete()
     ->where('id_alamat', $id_alamat)
+    ->execute();
+  }
+
+  public function updateProfile(){
+    $nama = $_POST['nama'];
+    $tempat_lahir = $_POST['tempat-lahir'];
+    $tanggal_lahir = $_POST['tanggal-lahir'];
+    $tahun_bergabung = $_POST['tahun-bergabung'];
+    $telepon = $_POST['nomor-telepon'];
+
+    $this->db->table('Jemaat')
+    ->update([
+      'nama_lengkap' => $nama,
+      'tempat_lahir' => $tempat_lahir,
+      'tanggal_lahir' => $tanggal_lahir,
+      'tahun_bergabung' => $tahun_bergabung,
+      'telepon' => $telepon
+    ])
+    ->where('username', $this->username)
+    ->execute();
+  }
+
+  public function updateProfilePicture(){
+    $files = $_FILES['files'];
+    $file_path = $files['tmp_name'][0]; // temporary upload path of the first file
+    $file_name = $files['name'][0]; // desired name of the file
+    if (!file_exists('uploads/' . $this->username)) 
+      mkdir('uploads/' . $this->username, 0777, true);
+    
+    $save_file_path = './uploads/' . $this->username . '/' . basename($file_name);   
+    move_uploaded_file($file_path, $save_file_path);
+    $this->savePhotoPath(basename($file_name));
+
+    $result = array();
+    $result['url'] = $save_file_path;
+    $result['whatever'] = "bip bop bip bop";
+    return json_encode($result);
+  }
+
+  public function addPelayanan(){
+    $id_pelayanan = $_POST['id-pelayanan'];
+    //cari dulu apakah user udah pernah register pelayanan ini?
+    $is_exists = $this->db->table('Pelayanan_Jemaat')->select()
+    ->where('username', $this->username)
+    ->where('id_pelayanan', $id_pelayanan)
+    ->exists();
+    if($is_exists) return;
+
+    $this->db->table('Pelayanan_Jemaat')
+    ->insert([
+      'id_pelayanan' => $id_pelayanan,
+      'username' => $this->username
+    ])
+    ->execute();
+  }
+
+  public function deletePelayanan(){
+    $id_pelayanan = $_POST['id-pelayanan'];
+    
+    $this->db->table('Pelayanan_Jemaat')
+    ->delete()
+    ->where('username', $this->username)
+    ->where('id_pelayanan', $id_pelayanan)
+    ->execute();
+  }
+
+  private function getPelayananList(){
+    require_once 'model/Pelayanan.php';
+    $query_result = $this->db->table('Pelayanan as p')
+    ->select(['p.id_pelayanan', 'p.nama', 'p.divisi', 'p.photo_path'])
+    ->get();
+
+    $result = array();
+    for($i = 0; $i < sizeof($query_result); $i++){
+      $value = $query_result[$i];
+      $result[$value['id_pelayanan']] = new Pelayanan($value['id_pelayanan'], $value['nama'], $value['divisi'], $value['photo_path']);
+    }
+
+    //cari semua pelayanan yang udah diambil sama user
+    $query_result = $this->db->table('Pelayanan_Jemaat as pj')
+    ->select(['pj.id_pelayanan'])
+    ->where('username', $this->username)
+    ->get();
+
+    //filter
+    for($i = 0; $i < sizeof($query_result); $i++){
+      $value = $query_result[$i];
+      $result[$value['id_pelayanan']]->setTaken();
+    }
+    return $result;
+  }
+
+  private function savePhotoPath($path){
+    $this->db->table('Jemaat')
+    ->update([
+      'photo_path' => $path
+    ])
+    ->where('username', $this->username)
     ->execute();
   }
 

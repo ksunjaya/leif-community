@@ -101,7 +101,7 @@ class UserController{
   public function getUser($username){
     $query_result = $this->db->table('Jemaat as j')
     ->select([
-      'j.username', 'j.nama_lengkap', 'j.tahun_bergabung', 'j.jenis_kelamin', 'j.tanggal_lahir', 'j.tempat_lahir', 'j.telepon', 'r.name', 'j.is_verified'
+      'j.username', 'j.nama_lengkap', 'j.tahun_bergabung', 'j.jenis_kelamin', 'j.tanggal_lahir', 'j.tempat_lahir', 'j.telepon', 'r.name', 'j.is_verified', 'j.photo_path'
     ])
     ->join('Role as r', 'j.id_role', '=', 'r.id_role')
     ->where('j.username', $username)
@@ -109,7 +109,7 @@ class UserController{
 
     require_once 'model/Jemaat.php';
     return new Jemaat($query_result[0]['username'], $query_result[0]['nama_lengkap'], $query_result[0]['tahun_bergabung'], $query_result[0]['jenis_kelamin'],
-    $query_result[0]['tanggal_lahir'], $query_result[0]['tempat_lahir'], $query_result[0]['telepon'], $query_result[0]['name'], $query_result[0]['is_verified']);
+    $query_result[0]['tanggal_lahir'], $query_result[0]['tempat_lahir'], $query_result[0]['telepon'], $query_result[0]['name'], $query_result[0]['is_verified'], $query_result[0]['photo_path']);
   }
 
   private function createSession($username, $role){
